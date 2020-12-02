@@ -10,7 +10,7 @@ class MPS(TNclass.TensorNetwork):
     def __init__(self):
         # Prepare parameters
         TNclass.TensorNetwork.__init__(self)
-
+    
     def mps_regularization(self, regular_center):
         if regular_center == -1:
             regular_center = self.tensor_info['n_length']-1

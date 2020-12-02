@@ -33,14 +33,13 @@ def get_best_gpu(device='cuda'):
     elif device == 'cpu':
         return torch.device('cpu')
 
-
+# sort the dict
 def sort_dict(a):
     b = dict()
     dict_index = sorted(a.keys())
     for index in dict_index:
         b[index] = a[index]
     return b
-
 
 def issubdict(a, b):
     # check keys
@@ -66,7 +65,7 @@ def save_pr_add_data(path, file, data, names):
     pickle.dump(tmp, s)
     s.close()
 
-
+# transform the input_parameter into md5 abstract
 def name_generator_md5(path, file, input_parameter, rough_mode='off'):
     file_time = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S_%f')
     file_save = file + '_' + file_time
@@ -75,7 +74,7 @@ def name_generator_md5(path, file, input_parameter, rough_mode='off'):
         os.makedirs(file_path)
     tmp_save = dict()
     input_parameter = sort_dict(input_parameter)
-    number_md5 = hashlib.md5(str(input_parameter).encode(encoding='utf-8')).hexdigest()
+    number_md5 = hashlib.md5(str(input_parameter).encode(encoding='utf-8')).hexdigest() # 对input_parameter进行MD加密
     tmp_save[number_md5] = input_parameter
     save_pr(file_path, file_save, [input_parameter], [number_md5])
     return number_md5
@@ -146,6 +145,7 @@ def load_pr(path_file, names=None):
         >>> save_pr('.\\test', 'ok.pr', [x, y, z], ['name1', 'name2', 'name3'])
         >>> A = load_pr('.\\test\\ok.pr')
           A = {'name1': 1, 'name2': 'good'}
+          
         >>> y, z = load_pr('\\test\\ok.pr', ['y', 'z'])
           y = 'good'
           z = [1, 2, 3]

@@ -38,7 +38,7 @@ def gtnc(para=dict()):
     para.update(training())
     # Machine Learning Parameter
     para['classifier_type'] = 'GTNC'
-    para['dataset'] = 'fashion'
+    para['dataset'] = 'mnist'
     # Program Parameter
     para['dtype'] = torch.float64
     para['data_deal_method'] = ['normalization']
@@ -67,7 +67,7 @@ def ml(para=dict()):
     para['path_dataset'] = './dataset/'
     para['data_type'] = ['train', 'test']
     para['classifier_type'] = 'None'
-    para['sort_module'] = 'rand'
+    para['sort_module'] = 'rand' # define the way to sort the dataset,rand mean shuffle the training data
     para['divide_module'] = 'label'
     para['save_data_path'] = './data_trained/'
     para['rand_index_mode'] = 'on'

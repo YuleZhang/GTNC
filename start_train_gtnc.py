@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from library import MPSMLclass
 from library import Parameters
 

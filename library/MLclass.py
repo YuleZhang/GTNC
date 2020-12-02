@@ -103,6 +103,8 @@ class MachineLearning:
             self.data_info['origin_shape'] = (321, 481, 3)
         self.data_info['shape'] = copy.copy(self.data_info['origin_shape'])
 
+    # the info of dataset including the number of train samples and test samples
+    # and the n_feature indicates the total pixels of one example,such as 784 in MNIST
     def calculate_dataset_info(self):
         self.data_info['n_sample'] = dict()
         for data_type in self.para['data_type']:
@@ -113,12 +115,17 @@ class MachineLearning:
             self.index[data_type] = dict()
             self.index[data_type]['origin'] = numpy.arange(self.data_info['n_sample'][data_type])
 
+    # divide the whole data into ten parts according the diverse labels
+    # the data will be load in self.index[data_type]['divided'][label]
     def divide_data(self, data_type='train'):
         self.index[data_type]['divided'] = dict()
         if self.para['divide_module'] == 'label':
+            # redundant loops in this transverse, because we just have to tranverse the ten labels. 
             for label in self.data_info['labels']:
                 self.index[data_type]['divided'][label] = numpy.where(label == self.labels_data[data_type])[0]
 
+    # load the images of label(self.para['training_label']), and shuffle it, finally store as images_data['input']
+    # also update the parameter data_info['n_traninging']
     def arrange_data(self):
         if self.para['sort_module'] == 'rand':
             self.images_data['train'], self.labels_data['train'] = \
@@ -187,6 +194,7 @@ class MachineLearning:
             state.reshape(-1, self.para['mapped_dimension'])[:, 0])).reshape(state_shape) / self.para['theta']
         return pixels
 
+    # shuffle the image_data correspond to image_label
     def rand_sort_data(self, image_data, image_label):
         numpy.random.seed(self.para['rand_index_seed'])
         rand_index = numpy.random.permutation(image_data.shape[0])
@@ -241,6 +249,7 @@ class MachineLearning:
         self.update_info['is_converged'] = 'untrained'
         self.update_info['update_mode'] = self.para['update_mode']
 
+    # get batch transform operations use it upon input images
     def deal_data(self, image_data, data_deal_method=tuple(), reverse_mode='off'):
         tmp_image_data = image_data.copy()
         if numpy.ndim(tmp_image_data) == 1:
@@ -255,6 +264,8 @@ class MachineLearning:
                 tmp_image_data = self.deal_data_once(tmp_image_data.copy(), method, reverse_mode=reverse_mode)
         return tmp_image_data
 
+    # take some operations such as rgb2gray/resize/normalization/noise/dct and so on to transform the image, 
+    # just worked as a preprocess procedure.
     def deal_data_once(self, image_data, method, reverse_mode='off'):
         tmp_image_data = image_data.copy()
         if ('rgb2gray' == method) & (reverse_mode == 'off'):

@@ -12,7 +12,7 @@ import operator
 
 
 class GTN(MPSclass.MPS, MLclass.MachineLearning, Programclass.Program):
-    def __init__(self, para=Parameters.gtn(), debug_mode=False, device='cuda'):
+    def __init__(self, para=Parameters.gtn(), debug_mode=False, device='cpu'):
         # Initialize Parameters
         Programclass.Program.__init__(self, device=device, dtype=para['dtype'])
         MLclass.MachineLearning.__init__(self, para, debug_mode)
@@ -32,7 +32,7 @@ class GTN(MPSclass.MPS, MLclass.MachineLearning, Programclass.Program):
         if not self.tensor_data[0].device == self.device:
             for ii in range(len(self.tensor_data)):
                 self.tensor_data[ii] = torch.tensor(self.tensor_data[ii], device=self.device)
-            torch.cuda.empty_cache()
+            if device=='cuda': torch.cuda.empty_cache()
         # Environment Preparation
         self.tensor_input = tuple()
         self.environment_left = tuple()
@@ -72,7 +72,7 @@ class GTN(MPSclass.MPS, MLclass.MachineLearning, Programclass.Program):
                 self.tensor_info['physical_bond'], 1,
                 device=self.device, dtype=self.dtype)
         elif self.para['tensor_initialize_type'] == 'ones':
-            for ii in range(self.tensor_info['n_length']):
+            for ii in range(self.tensor_info['n_length']): 
                 self.tensor_data.append(torch.ones((
                     self.para['tensor_initialize_bond'],
                     self.tensor_info['physical_bond'], self.para['tensor_initialize_bond']),
@@ -163,7 +163,7 @@ class GTN(MPSclass.MPS, MLclass.MachineLearning, Programclass.Program):
         #     self.calculate_environment_next(ii + 1)
         for ii in range(self.tensor_info['n_length']-1, 0, -1):
             self.calculate_environment_forward(ii - 1)
-
+    
     def calculate_cost_function(self):
         if self.update_info['update_position'] != 0:
             print('go check your code')
@@ -264,7 +264,7 @@ class GTN(MPSclass.MPS, MLclass.MachineLearning, Programclass.Program):
 
 
 class GTNC(Programclass.Program, MLclass.MachineLearning):
-    def __init__(self, para=Parameters.gtnc(), debug_mode=False, device='cuda'):
+    def __init__(self, para=Parameters.gtnc(), debug_mode=False, device='cpu'):
         # Initialize Parameters
         Programclass.Program.__init__(self, device=device, dtype=para['dtype'])
         MLclass.MachineLearning.__init__(self, para, debug_mode)

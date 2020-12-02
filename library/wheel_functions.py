@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 '''
-2020年11月29日
-封装了一些张量的基本操作，可以进行移植，添加了部分的注释
+2020-11-29
+Some basic operations of tensors are encapsulated, which can be transplanted, and some comments are added.
 '''
 import numpy
 import torch
@@ -24,11 +24,11 @@ def outer(a, *matrix):
 def tensor_contract(a, b, index):
     '''
     parameter:
-        a: numpy.array,待收缩张量a
-        b: numpy.array,待收缩张量b
-        index: 二维列表,表示a,b待收缩的指标,例如[[1], [0]]
+        a: numpy.array,Tensor a to be contracted
+        b: numpy.array,Tensor b to be contracted
+        index: Two-dimensional list,indicated the contracted index in a/b,such as [[1], [0]]
     return:
-        numpy.array,张量收缩结果,返回矩阵
+        numpy.array,the contracted result(matrix) of tensor a and b.
     '''
     ndim_a = numpy.array(a.shape)
     ndim_b = numpy.array(b.shape)
@@ -50,12 +50,12 @@ def tensor_contract(a, b, index):
 def tensor_svd(tmp_tensor, index_left='none', index_right='none'):
     '''
     parameter:
-        tmp_tensor: numpy.array,default=none，待分解的张量
-        index_left: int,default=none,左侧剩余张量
-        index_right: int,default=none,右侧剩余张量
-        注意index_left和index_right不能同时为none
+        tmp_tensor: numpy.array,default=none, Tensor to be decomposed
+        index_left: int,default=none. range 0~2
+        index_right: int,default=none.range 0~2
+        Note that index_left and index_right cannot be none at the same time.
     return:
-        返回分解的结果u,l,v
+        decomposed result u,l,v
     '''
     tmp_shape = numpy.array(tmp_tensor.shape) 
     tmp_index = numpy.arange(len(tmp_tensor.shape))  # 很巧妙的生成各个阶的索引
@@ -67,7 +67,7 @@ def tensor_svd(tmp_tensor, index_left='none', index_right='none'):
         index_right = numpy.setdiff1d(tmp_index, index_left)
     index_right = numpy.array(index_right).flatten()
     index_left = numpy.array(index_left).flatten()
-    tmp_tensor = tmp_tensor.transpose(tuple(numpy.concatenate([index_left, index_right]))) # 此处原本是permute修改为transpose操作含义一样
-    tmp_tensor = tmp_tensor.reshape(tmp_shape[index_left].prod(), tmp_shape[index_right].prod())　# reshape成矩阵之后进行分解
-    u, l, v = torch.svd(tmp_tensor)  # svd分解并返回结果
+    tmp_tensor = tmp_tensor.permute(tuple(numpy.concatenate([index_left, index_right])))
+    tmp_tensor = tmp_tensor.reshape(tmp_shape[index_left].prod(), tmp_shape[index_right].prod())# reshape成矩阵之后进行分解
+    u, l, v = torch.svd(tmp_tensor) # svd分解并返回结果
     return u, l, v
